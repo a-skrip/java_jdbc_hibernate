@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%highlight(%-5level) [%blue(%t)] %yellow(%C{1}): %msg%n%throwable</pattern>
+        </encoder>
+    </appender>
+
+    <!-- SQL logging -->
+    <logger name="org.hrsninja.api.repository" level="DEBUG" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+
+    <!-- Application logging -->
+    <logger name="org.hrsninja.api" level="DEBUG" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+
+    <!-- Spring Framework logging -->
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="Console" />
+    </root>
+</configuration>
