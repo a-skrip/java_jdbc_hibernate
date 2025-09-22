@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>org.hrsninja</groupId>
-    <artifactId>hr-skill-ninja</artifactId>
+    <artifactId>java-jdbc-hibernate</artifactId>
     <version>1.0</version>
-    <name>HRSkillNinja</name>
+    <name>java-jdbc-hibernate</name>
     <description>HR Candidate Tracking Microservice</description>
 
     <properties>
