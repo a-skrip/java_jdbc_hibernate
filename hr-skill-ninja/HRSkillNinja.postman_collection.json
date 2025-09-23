@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "hr-skill-ninja",
+		"name": "HR Skill Ninja API",
+		"description": "A lightweight candidate-tracking microservice for internal HR department use",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Candidate",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fio\": \"Ivanov Ivan Ivanovich\",\n    \"age\": 32,\n    \"position\": \"Senior Java Developer\",\n    \"cvInfo\": \"Experienced Java developer with 5+ years of experience\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates"]
+				}
+			}
+		},
+		{
+			"name": "Update Candidate",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fio\": \"Ivanov Ivan Ivanovich\",\n    \"age\": 33,\n    \"position\": \"Senior Java Developer\",\n    \"cvInfo\": \"Updated CV information\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates/{{candidateId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates", "{{candidateId}}"]
+				}
+			}
+		},
+		{
+			"name": "Change Status",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"CV_REVIEW\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates/{{candidateId}}/status",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates", "{{candidateId}}", "status"]
+				}
+			}
+		},
+		{
+			"name": "Change Comment",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"comment\": \"Passed technical interview\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates/{{candidateId}}/comment",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates", "{{candidateId}}", "comment"]
+				}
+			}
+		},
+		{
+			"name": "Get All Candidates",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates"]
+				}
+			}
+		},
+		{
+			"name": "Get Candidate by ID",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates/{{candidateId}}",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates", "{{candidateId}}"]
+				}
+			}
+		},
+		{
+			"name": "Search Candidates",
+			"request": {
+				"method": "GET",
+				"url": {
+					"raw": "{{baseUrl}}/api/v1/candidates/search?fio=Ivanov&status=NEW,CV_REVIEW&position=Developer",
+					"host": ["{{baseUrl}}"],
+					"path": ["api", "v1", "candidates", "search"],
+					"query": [
+						{
+							"key": "fio",
+							"value": "Ivanov"
+						},
+						{
+							"key": "status",
+							"value": "NEW,CV_REVIEW"
+						},
+						{
+							"key": "position",
+							"value": "Developer"
+						}
+					]
+				}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8090"
+		},
+		{
+			"key": "candidateId",
+			"value": "00000000-0000-0000-0000-000000000000"
+		}
+	]
+}
