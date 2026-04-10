@@ -2,9 +2,9 @@ server:
   port: 8090
 
 spring:
+  config:
+    import: C:\skillbox\java_jdbc_hibernate\hr-skill-ninja\db-secret.yaml
   datasource:
-    password: "moviereviews"
-    username: "moviereviews"
     url: "jdbc:postgresql://localhost:5433/moviereviews"
     driver-class-name: org.postgresql.Driver
   flyway:
