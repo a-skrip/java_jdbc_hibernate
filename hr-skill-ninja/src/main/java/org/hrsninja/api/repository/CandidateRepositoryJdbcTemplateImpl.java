@@ -110,6 +110,7 @@ public class CandidateRepositoryJdbcTemplateImpl implements CandidateRepository 
                 FROM candidates
                 WHERE 1=1
                 """);
+        log.info("Поиск c применение фильтров JDBC Template");
 
         List<Object> params = new ArrayList<>();
 
