@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface CandidateRepository {
     Candidate save(Candidate candidate);
+    void saveAll(List<Candidate> candidates);
     Candidate update(Candidate candidate);
     Optional<Candidate> findById(UUID id);
     List<Candidate> findAll();

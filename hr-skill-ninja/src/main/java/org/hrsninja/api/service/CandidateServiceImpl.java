@@ -20,14 +20,14 @@ public class CandidateServiceImpl implements CandidateService {
     private final CandidateMapper mapper;
 
     private static final Map<CandidateStatus, Set<CandidateStatus>> ALLOWED_TRANSITIONS = Map.of(
-        CandidateStatus.NEW, Set.of(CandidateStatus.CV_REVIEW, CandidateStatus.DECLINED),
-        CandidateStatus.CV_REVIEW, Set.of(CandidateStatus.SCHEDULED_FOR_INTERVIEW, CandidateStatus.DECLINED),
-        CandidateStatus.SCHEDULED_FOR_INTERVIEW, Set.of(CandidateStatus.INTERVIEW, CandidateStatus.DECLINED),
-        CandidateStatus.INTERVIEW, Set.of(CandidateStatus.OFFER, CandidateStatus.DECLINED),
-        CandidateStatus.OFFER, Set.of(CandidateStatus.ACCEPTED, CandidateStatus.DECLINED),
-        CandidateStatus.ACCEPTED, Set.of(CandidateStatus.STARTED_WORKING, CandidateStatus.DECLINED),
-        CandidateStatus.STARTED_WORKING, Set.of(),
-        CandidateStatus.DECLINED, Set.of()
+            CandidateStatus.NEW, Set.of(CandidateStatus.CV_REVIEW, CandidateStatus.DECLINED),
+            CandidateStatus.CV_REVIEW, Set.of(CandidateStatus.SCHEDULED_FOR_INTERVIEW, CandidateStatus.DECLINED),
+            CandidateStatus.SCHEDULED_FOR_INTERVIEW, Set.of(CandidateStatus.INTERVIEW, CandidateStatus.DECLINED),
+            CandidateStatus.INTERVIEW, Set.of(CandidateStatus.OFFER, CandidateStatus.DECLINED),
+            CandidateStatus.OFFER, Set.of(CandidateStatus.ACCEPTED, CandidateStatus.DECLINED),
+            CandidateStatus.ACCEPTED, Set.of(CandidateStatus.STARTED_WORKING, CandidateStatus.DECLINED),
+            CandidateStatus.STARTED_WORKING, Set.of(),
+            CandidateStatus.DECLINED, Set.of()
     );
 
     @Override
@@ -47,7 +47,7 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public CandidateDTO update(UUID id, UpdateCandidateRequest request) {
         Candidate candidate = getCandidateOrThrow(id);
-        
+
         candidate.setFio(request.getFio());
         candidate.setAge(request.getAge());
         candidate.setPosition(request.getPosition());
@@ -57,13 +57,32 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    public CandidatesDTO saveAll(BatchCandidatesCreateRequest request) {
+        List<Candidate> candidates = request.getCandidates().stream()
+                .map(candidateRequest -> {
+                    Candidate candidate = mapper.toEntity(candidateRequest);
+                    candidate.setId(UUID.randomUUID());
+                    candidate.setStatus(CandidateStatus.NEW);
+
+                    return candidate;
+                })
+                .toList();
+        repository.saveAll(candidates);
+
+        return new CandidatesDTO(
+                candidates.stream()
+                        .map(mapper::toDTO)
+                        .toList());
+    }
+
+    @Override
     public CandidateDTO changeStatus(UUID id, ChangeStatusRequest request) {
         Candidate candidate = getCandidateOrThrow(id);
-        
+
         if (!isValidTransition(candidate.getStatus(), request.getStatus())) {
             throw new IllegalStatusTransitionException(
-                String.format("Cannot transition from %s to %s", 
-                    candidate.getStatus(), request.getStatus()));
+                    String.format("Cannot transition from %s to %s",
+                            candidate.getStatus(), request.getStatus()));
         }
 
         candidate.setStatus(request.getStatus());
@@ -80,27 +99,27 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public List<CandidateDTO> findAll() {
         return repository.findAll().stream()
-            .map(mapper::toDTO)
-            .collect(Collectors.toList());
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     public CandidateDTO findById(UUID id) {
         return repository.findById(id)
-            .map(mapper::toDTO)
-            .orElseThrow(() -> new CandidateNotFoundException(id));
+                .map(mapper::toDTO)
+                .orElseThrow(() -> new CandidateNotFoundException(id));
     }
 
     @Override
     public List<CandidateDTO> search(String fio, Set<CandidateStatus> statuses, String position) {
         return repository.search(fio, statuses, position).stream()
-            .map(mapper::toDTO)
-            .collect(Collectors.toList());
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private Candidate getCandidateOrThrow(UUID id) {
         return repository.findById(id)
-            .orElseThrow(() -> new CandidateNotFoundException(id));
+                .orElseThrow(() -> new CandidateNotFoundException(id));
     }
 
     private boolean isValidTransition(CandidateStatus from, CandidateStatus to) {

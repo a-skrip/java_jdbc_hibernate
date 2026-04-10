@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface CandidateService {
     CandidateDTO create(CreateCandidateRequest request);
     CandidateDTO update(UUID id, UpdateCandidateRequest request);
+    CandidatesDTO saveAll(BatchCandidatesCreateRequest request);
     CandidateDTO changeStatus(UUID id, ChangeStatusRequest request);
     CandidateDTO changeComment(UUID id, ChangeCommentRequest request);
     List<CandidateDTO> findAll();

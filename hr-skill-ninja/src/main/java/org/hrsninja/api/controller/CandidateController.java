@@ -27,6 +27,12 @@ public class CandidateController {
         return service.create(request);
     }
 
+    @PostMapping("/batch")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CandidatesDTO createBatch(@Valid @RequestBody BatchCandidatesCreateRequest request) {
+        return service.saveAll(request);
+    }
+
     @PutMapping("/{id}")
     public CandidateDTO update(@PathVariable UUID id, @Valid @RequestBody UpdateCandidateRequest request) {
         return service.update(id, request);
