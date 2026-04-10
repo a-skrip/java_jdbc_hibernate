@@ -1,0 +1,1 @@
+COMMENT ON COLUMN candidates.fio IS 'Ф.И.О. кандидата';
