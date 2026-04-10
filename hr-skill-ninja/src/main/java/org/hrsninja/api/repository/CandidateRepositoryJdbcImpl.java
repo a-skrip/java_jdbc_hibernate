@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.*;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class CandidateRepositoryJdbcImpl implements CandidateRepository {
 
