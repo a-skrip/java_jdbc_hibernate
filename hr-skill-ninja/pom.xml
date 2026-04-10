@@ -24,6 +24,7 @@
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <logstash.version>7.4</logstash.version>
         <springdoc.version>2.3.0</springdoc.version>
+        <flyway.version>11.9.1</flyway.version>
     </properties>
 
     <dependencies>
@@ -68,6 +69,19 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- Migration -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
         </dependency>
 
         <!-- OpenAPI Documentation -->
