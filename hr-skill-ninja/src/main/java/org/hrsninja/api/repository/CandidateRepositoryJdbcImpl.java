@@ -12,9 +12,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CandidateRepositoryJdbcImpl implements CandidateRepository {
 
-    private final static String URL = "jdbc:postgresql://localhost:5433/postgres";
-    private final static String USERNAME = "postgres";
-    private final static String PASSWORD = "postgres";
+    private final static String URL = "jdbc:postgresql://localhost:5433/moviereviews";
+    private final static String USERNAME = "moviereviews";
+    private final static String PASSWORD = "moviereviews";
 
     @Override
     public Candidate save(Candidate candidate) {

@@ -1,2 +1,8 @@
 server:
   port: 8090
+
+#spring:
+#  datasource:
+#    password: "moviereviews"
+#    username: "moviereviews"
+#    url: "jdbc:postgresql://localhost:5433/moviereviews"
