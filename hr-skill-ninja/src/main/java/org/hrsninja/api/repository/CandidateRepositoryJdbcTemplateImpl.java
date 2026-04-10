@@ -6,8 +6,12 @@ import org.hrsninja.api.model.Candidate;
 import org.hrsninja.api.model.CandidateStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.*;
 
 @Repository
@@ -16,6 +20,7 @@ import java.util.*;
 public class CandidateRepositoryJdbcTemplateImpl implements CandidateRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private static final RowMapper<Candidate> ROW_MAPPER = ((rs, rowNum) -> {
         Candidate candidate = new Candidate();
@@ -53,22 +58,27 @@ public class CandidateRepositoryJdbcTemplateImpl implements CandidateRepository 
     public void saveAll(List<Candidate> candidates) {
         String sql = """
                 INSERT INTO candidates (id, fio, age, position, cv_info, status)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (:id, :fio, :age, :position, :cvInfo, :status)
                 """;
-        log.info("Сохранение батчем ");
 
-        jdbcTemplate.batchUpdate(sql,
-                candidates,
-                5,
-                (ps, candidate) -> {
-                    ps.setObject(1, candidate.getId());
-                    ps.setObject(2, candidate.getFio());
-                    ps.setObject(3, candidate.getAge());
-                    ps.setObject(4, candidate.getPosition());
-                    ps.setObject(5, candidate.getCvInfo());
-                    ps.setObject(6, candidate.getStatus().name());
-                }
-        );
+        log.info("Сохранение Named param");
+
+        SqlParameterSource[] batch = candidates.stream()
+                .map(this::toParamSource)
+                .toArray(SqlParameterSource[]::new);
+
+
+        namedParameterJdbcTemplate.batchUpdate(sql, batch);
+    }
+
+    private MapSqlParameterSource toParamSource(Candidate candidate) {
+        return new MapSqlParameterSource()
+                .addValue("id", candidate.getId())
+                .addValue("fio", candidate.getFio())
+                .addValue("age", candidate.getAge())
+                .addValue("position", candidate.getPosition())
+                .addValue("cvInfo", candidate.getCvInfo())
+                .addValue("status", candidate.getStatus().name(), Types.VARCHAR);
     }
 
     @Override
@@ -159,4 +169,5 @@ public class CandidateRepositoryJdbcTemplateImpl implements CandidateRepository 
                 params.toArray()
         );
     }
+
 }
