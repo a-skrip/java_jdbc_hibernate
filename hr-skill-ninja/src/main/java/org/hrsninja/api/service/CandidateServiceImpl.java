@@ -1,6 +1,7 @@
 package org.hrsninja.api.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hrsninja.api.dto.*;
 import org.hrsninja.api.exception.CandidateNotFoundException;
 import org.hrsninja.api.exception.IllegalStatusTransitionException;
@@ -8,16 +9,23 @@ import org.hrsninja.api.model.Candidate;
 import org.hrsninja.api.model.CandidateStatus;
 import org.hrsninja.api.repository.CandidateRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CandidateServiceImpl implements CandidateService {
 
     private final CandidateRepository repository;
     private final CandidateMapper mapper;
+    private final PlatformTransactionManager txManager;
 
     private static final Map<CandidateStatus, Set<CandidateStatus>> ALLOWED_TRANSITIONS = Map.of(
             CandidateStatus.NEW, Set.of(CandidateStatus.CV_REVIEW, CandidateStatus.DECLINED),
@@ -31,6 +39,7 @@ public class CandidateServiceImpl implements CandidateService {
     );
 
     @Override
+    @Transactional
     public CandidateDTO create(CreateCandidateRequest request) {
         Candidate candidate = new Candidate();
 
@@ -41,7 +50,20 @@ public class CandidateServiceImpl implements CandidateService {
         candidate.setCvInfo(request.getCvInfo());
         candidate.setStatus(CandidateStatus.NEW);
 
-        return mapper.toDTO(repository.save(candidate));
+        Candidate saved = repository.save(candidate);
+
+        sendInfo(saved);
+
+        return mapper.toDTO(saved);
+
+    }
+
+    private void sendInfo(Candidate saved) {
+        log.info("Сохранен кандидат с ID = {}", saved.getId());
+
+        if (!saved.getPosition().contains("Java")) {
+            throw new RuntimeException();
+        }
     }
 
     @Override
@@ -97,6 +119,7 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CandidateDTO> findAll() {
         return repository.findAll().stream()
                 .map(mapper::toDTO)
@@ -104,6 +127,7 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CandidateDTO findById(UUID id) {
         return repository.findById(id)
                 .map(mapper::toDTO)
@@ -111,6 +135,7 @@ public class CandidateServiceImpl implements CandidateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CandidateDTO> search(String fio, Set<CandidateStatus> statuses, String position) {
         return repository.search(fio, statuses, position).stream()
                 .map(mapper::toDTO)
