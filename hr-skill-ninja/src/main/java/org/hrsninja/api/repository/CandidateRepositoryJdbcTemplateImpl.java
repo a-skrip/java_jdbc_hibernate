@@ -50,6 +50,28 @@ public class CandidateRepositoryJdbcTemplateImpl implements CandidateRepository 
     }
 
     @Override
+    public void saveAll(List<Candidate> candidates) {
+        String sql = """
+                INSERT INTO candidates (id, fio, age, position, cv_info, status)
+                VALUES (?, ?, ?, ?, ?, ?)
+                """;
+        log.info("Сохранение батчем ");
+
+        jdbcTemplate.batchUpdate(sql,
+                candidates,
+                5,
+                (ps, candidate) -> {
+                    ps.setObject(1, candidate.getId());
+                    ps.setObject(2, candidate.getFio());
+                    ps.setObject(3, candidate.getAge());
+                    ps.setObject(4, candidate.getPosition());
+                    ps.setObject(5, candidate.getCvInfo());
+                    ps.setObject(6, candidate.getStatus().name());
+                }
+        );
+    }
+
+    @Override
     public Candidate update(Candidate candidate) {
         String sql = """
                 UPDATE candidates

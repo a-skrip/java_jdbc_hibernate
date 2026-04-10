@@ -46,6 +46,11 @@ public class CandidateRepositoryJdbcImpl implements CandidateRepository {
     }
 
     @Override
+    public void saveAll(List<Candidate> candidates) {
+
+    }
+
+    @Override
     public Candidate update(Candidate candidate) {
         String sql = """
                 UPDATE candidates
